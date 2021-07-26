@@ -1,7 +1,7 @@
 const timerShowMW = setTimeout(() => {
     document.querySelector(".popup").style.display = 'block';
     document.body.style.overflow = 'hidden';
-}, 5000);
+}, 60000000);
 
 export default function modal(selButton, selModal) {
     const modalElement = document.querySelector(selModal);
