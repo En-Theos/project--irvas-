@@ -1,4 +1,4 @@
-export default function postForms() {
+export default function postForms(data) {
     const forms = document.querySelectorAll("form");
     const inputs = document.querySelectorAll('input[name="user_phone"]');
 
@@ -17,6 +17,7 @@ export default function postForms() {
     forms.forEach(form => {
         form.addEventListener("submit", (event) => {
             event.preventDefault();
+            console.log("ads");
 
             const div = document.createElement("div");
             div.classList.add("status");
@@ -25,8 +26,13 @@ export default function postForms() {
             `;
             form.append(div);
 
-            const formData = new FormData(form);
-            const postData = JSON.stringify(Object.fromEntries(formData.entries()));
+            let formData = Object.fromEntries(new FormData(form).entries());
+
+            if (form.getAttribute("data-calc") == "end") {
+                formData = Object.assign(data, formData);
+            }
+
+            const postData = JSON.stringify(formData);
             
             fetch("http://localhost:3000/formData", {
                 method: "POST",

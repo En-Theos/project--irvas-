@@ -16467,18 +16467,101 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_modal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js");
 /* harmony import */ var _modules_tabs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/tabs */ "./src/js/modules/tabs.js");
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
+/* harmony import */ var _modules_formCalc__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/formCalc */ "./src/js/modules/formCalc.js");
+/* harmony import */ var _modules_timer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js");
+
+
 
 
 
 
 window.addEventListener('DOMContentLoaded', () => {
+  const data = {};
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_1__["default"])(".popup_engineer_btn", ".popup_engineer");
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_1__["default"])(".contact_us_wrap", ".popup");
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_1__["default"])(".feedback_block .phone_link", ".popup");
-  Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])(".glazing_slider", ".glazing_block", ".glazing_content", "active");
-  Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])(".decoration_slider", ".no_click", ".decoration_content > div > div", "after_click");
-  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])();
+  Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])(".glazing_slider", ".glazing_block", ".glazing_content", "active", "block");
+  Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])(".decoration_slider", ".no_click", ".decoration_content > div > div", "after_click", "block");
+  Object(_modules_formCalc__WEBPACK_IMPORTED_MODULE_4__["default"])(data);
+  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])(data);
+  Object(_modules_timer__WEBPACK_IMPORTED_MODULE_5__["default"])("2021-08-09", "#timer");
 });
+
+/***/ }),
+
+/***/ "./src/js/modules/formCalc.js":
+/*!************************************!*\
+  !*** ./src/js/modules/formCalc.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return formCalc; });
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _modal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modal */ "./src/js/modules/modal.js");
+/* harmony import */ var _tabs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./tabs */ "./src/js/modules/tabs.js");
+
+
+
+function formCalc(data) {
+  Object(_modal__WEBPACK_IMPORTED_MODULE_1__["default"])(".popup_calc_btn", ".popup_calc");
+  Object(_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])(".balcon_icons", ".balcon_icons_img", ".popup_calc_content .big_img img", "do_image_more", "inline");
+  document.querySelectorAll(".popup_calc_content .balcon_icons img").forEach((img, i) => {
+    img.addEventListener('click', () => {
+      data.form = i + 1;
+      dataValidation(data);
+    });
+  });
+  document.querySelectorAll(".popup_calc .form-control").forEach(button => {
+    button.addEventListener('input', () => {
+      button.value = button.value.replace(/\D/, "");
+
+      switch (button.id) {
+        case "width":
+          data.width = +button.value;
+          break;
+
+        case "height":
+          data.height = +button.value;
+          break;
+      }
+
+      dataValidation(data);
+    });
+  });
+  document.querySelector(".popup_calc_profile_content select").addEventListener('change', event => {
+    data.type = event.target.value;
+    dataValidation(data);
+  });
+  const checkbox = document.querySelectorAll(".checkbox");
+  checkbox.forEach(item => {
+    item.addEventListener('change', () => {
+      checkbox.forEach(i => i.checked = false);
+      data.profile = item.nextElementSibling.id;
+      item.checked = true;
+      dataValidation(data);
+    });
+  });
+
+  function dataValidation({
+    form,
+    width,
+    height,
+    type,
+    profile
+  }) {
+    if (form && width && height) {
+      Object(_modal__WEBPACK_IMPORTED_MODULE_1__["default"])(".popup_calc_button", ".popup_calc_profile");
+    }
+
+    if (type && profile) {
+      Object(_modal__WEBPACK_IMPORTED_MODULE_1__["default"])(".popup_calc_profile_button", ".popup_calc_end");
+    }
+  }
+}
 
 /***/ }),
 
@@ -16501,7 +16584,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function postForms() {
+function postForms(data) {
   const forms = document.querySelectorAll("form");
   const inputs = document.querySelectorAll('input[name="user_phone"]');
   const message = {
@@ -16517,14 +16600,20 @@ function postForms() {
   forms.forEach(form => {
     form.addEventListener("submit", event => {
       event.preventDefault();
+      console.log("ads");
       const div = document.createElement("div");
       div.classList.add("status");
       div.innerHTML = `
                 <img src="${message.load}" alt="Ops...">
             `;
       form.append(div);
-      const formData = new FormData(form);
-      const postData = JSON.stringify(Object.fromEntries(formData.entries()));
+      let formData = Object.fromEntries(new FormData(form).entries());
+
+      if (form.getAttribute("data-calc") == "end") {
+        formData = Object.assign(data, formData);
+      }
+
+      const postData = JSON.stringify(formData);
       fetch("http://localhost:3000/formData", {
         method: "POST",
         headers: {
@@ -16565,13 +16654,16 @@ const timerShowMW = setTimeout(() => {
 }, 60000000);
 function modal(selButton, selModal) {
   const modalElement = document.querySelector(selModal);
-  document.querySelector(selButton).addEventListener('click', event => {
-    if (event.target) {
-      event.preventDefault();
-      modalElement.style.display = 'block';
-      document.body.style.overflow = 'hidden';
-      clearTimeout(timerShowMW);
-    }
+  document.querySelectorAll(selButton).forEach(button => {
+    button.addEventListener('click', event => {
+      if (event.target) {
+        document.querySelectorAll("[data-modal]").forEach(window => window.style.display = 'none');
+        event.preventDefault();
+        modalElement.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        clearTimeout(timerShowMW);
+      }
+    });
   });
   modalElement.addEventListener('click', event => {
     if (event.target.tagName == "STRONG" || event.target == modalElement) {
@@ -16596,7 +16688,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_0__);
 
-function tabs(selParentButton, selArrButton, selArrContent, classActive) {
+function tabs(selParentButton, selArrButton, selArrContent, classActive, display) {
   document.querySelector(selParentButton).addEventListener("click", event => {
     if (event.target && event.target.parentElement.classList.contains(selArrButton.replace(/\./, ""))) {
       const arrButton = document.querySelectorAll(selArrButton),
@@ -16604,7 +16696,7 @@ function tabs(selParentButton, selArrButton, selArrContent, classActive) {
       arrButton.forEach((button, i) => {
         if (button == event.target.parentElement) {
           button.classList.add(classActive);
-          arrContent[i].style.display = "block";
+          arrContent[i].style.display = display;
         } else {
           button.classList.remove(classActive);
           arrContent[i].style.display = "none";
@@ -16612,6 +16704,55 @@ function tabs(selParentButton, selArrButton, selArrContent, classActive) {
       });
     }
   });
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/timer.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/timer.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return timer; });
+function timer(deadline, idTimer) {
+  const timer = document.querySelector(idTimer);
+  const boxDays = timer.querySelector("#days"),
+        boxHours = timer.querySelector("#hours"),
+        boxMinutes = timer.querySelector("#minutes"),
+        boxSeconds = timer.querySelector("#seconds");
+  const repeatCode = setInterval(setDataForTimer, 1000);
+
+  function setDataForTimer() {
+    const remainderTime = Date.parse(deadline) - new Date();
+    const remainderDays = Math.round(remainderTime / (1000 * 60 * 60 * 24)),
+          remainderHours = Math.round(remainderTime / (1000 * 60 * 60) % 24),
+          remainderMinutes = Math.round(remainderTime / (1000 * 60) % 60),
+          remainderSeconds = Math.round(remainderTime / 1000 % 60);
+    boxDays.textContent = getZero(remainderDays);
+    boxHours.textContent = getZero(remainderHours);
+    boxMinutes.textContent = getZero(remainderMinutes);
+    boxSeconds.textContent = getZero(remainderSeconds);
+
+    if (remainderTime <= 0) {
+      clearInterval(repeatCode);
+    }
+  }
+
+  setDataForTimer();
+}
+
+function getZero(number) {
+  if (number < 10 && number > 0) {
+    return `0${number}`;
+  } else if (number < 0) {
+    return "00";
+  } else {
+    return number;
+  }
 }
 
 /***/ }),
