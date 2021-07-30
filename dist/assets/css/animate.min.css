@@ -1625,5 +1625,6 @@
 }
 
 .slideOutUp {
-    animation-name: slideOutUp
+    animation-name: slideOutUp;
+    
 }

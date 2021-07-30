@@ -16469,6 +16469,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
 /* harmony import */ var _modules_formCalc__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/formCalc */ "./src/js/modules/formCalc.js");
 /* harmony import */ var _modules_timer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js");
+/* harmony import */ var _modules_scaleImage__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/scaleImage */ "./src/js/modules/scaleImage.js");
+
 
 
 
@@ -16485,6 +16487,7 @@ window.addEventListener('DOMContentLoaded', () => {
   Object(_modules_formCalc__WEBPACK_IMPORTED_MODULE_4__["default"])(data);
   Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])(data);
   Object(_modules_timer__WEBPACK_IMPORTED_MODULE_5__["default"])("2021-08-09", "#timer");
+  Object(_modules_scaleImage__WEBPACK_IMPORTED_MODULE_6__["default"])(".preview");
 });
 
 /***/ }),
@@ -16651,7 +16654,7 @@ __webpack_require__.r(__webpack_exports__);
 const timerShowMW = setTimeout(() => {
   document.querySelector(".popup").style.display = 'block';
   document.body.style.overflow = 'hidden';
-}, 60000000);
+}, 6000);
 function modal(selButton, selModal) {
   const modalElement = document.querySelector(selModal);
   document.querySelectorAll(selButton).forEach(button => {
@@ -16669,6 +16672,44 @@ function modal(selButton, selModal) {
     if (event.target.tagName == "STRONG" || event.target == modalElement) {
       modalElement.style.display = 'none';
       document.body.style.overflow = '';
+    }
+  });
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/scaleImage.js":
+/*!**************************************!*\
+  !*** ./src/js/modules/scaleImage.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return scaleImage; });
+function scaleImage(selImage) {
+  const boxForImage = document.createElement("div");
+  boxForImage.classList.add("popup");
+  boxForImage.style.cssText = `
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.8);
+    `;
+  document.body.append(boxForImage);
+  const contentImage = document.createElement("img");
+  document.querySelectorAll(selImage).forEach(image => {
+    image.addEventListener('click', event => {
+      event.preventDefault();
+      boxForImage.style.display = "flex";
+      contentImage.src = image.parentElement.href;
+      boxForImage.append(contentImage);
+    });
+  });
+  boxForImage.addEventListener('click', event => {
+    if (event.target == boxForImage) {
+      boxForImage.style.display = "none";
     }
   });
 }

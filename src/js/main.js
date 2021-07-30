@@ -4,6 +4,7 @@ import tabs from "./modules/tabs";
 import postForms from "./modules/forms";
 import formCalc from "./modules/formCalc";
 import timer from "./modules/timer";
+import scaleImage from "./modules/scaleImage";
 
 window.addEventListener('DOMContentLoaded', () => {
     const data = {};
@@ -16,4 +17,5 @@ window.addEventListener('DOMContentLoaded', () => {
     formCalc(data);
     postForms(data);
     timer("2021-08-09", "#timer");
+    scaleImage(".preview");
 });
